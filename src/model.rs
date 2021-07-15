@@ -99,10 +99,10 @@ model:
     let m = Model::load_from_str(valid_model()).unwrap();
     assert_eq!(m.name, String::from("expenses"));
     assert_eq!(m.default_lang, String::from("en"));
-    assert_eq!(m.labels.label_for_lang(en.clone(), m.default_lang.clone()), String::from("Expenses"));
-    assert_eq!(m.labels.label_for_lang(String::from("fr"), m.default_lang.clone()), String::from("Les Expenses"));
-    assert_eq!(m.aggregates.get("expense_report").unwrap().labels.label_for_lang(en.clone(), m.default_lang.clone()), String::from("Expense Report"));
-    assert_eq!(m.aggregates.get("expense_report").unwrap().entities.get("expense_line").unwrap().labels.label_for_lang(en.clone(), m.default_lang.clone()), String::from("Expense Line"));
+    assert_eq!(m.labels.label_for_lang(&en, &m.default_lang), String::from("Expenses"));
+    assert_eq!(m.labels.label_for_lang(&"fr", &m.default_lang), String::from("Les Expenses"));
+    assert_eq!(m.aggregates.get("expense_report").unwrap().labels.label_for_lang(&en, &m.default_lang), String::from("Expense Report"));
+    assert_eq!(m.aggregates.get("expense_report").unwrap().entities.get("expense_line").unwrap().labels.label_for_lang(&en, &m.default_lang), String::from("Expense Line"));
   }
 
   #[test]
@@ -110,7 +110,7 @@ model:
     let en = String::from("en");
     let m = Model::load_from_str(valid_model()).unwrap();
     let e = m.aggregates.get("expense_report").unwrap().entities.get("expense_report").unwrap();
-    assert_eq!(e.fields_for_country("us").unwrap().get("cost").unwrap().labels.label_for_lang(en.clone(), en.clone()), String::from("Cost"));
+    assert_eq!(e.fields_for_country("us").unwrap().get("cost").unwrap().labels.label_for_lang(&en, &en), String::from("Cost"));
     assert!(e.fields_for_country("us").unwrap().get("vat").is_none());
   }
 /*
