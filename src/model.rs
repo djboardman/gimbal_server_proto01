@@ -5,6 +5,9 @@ mod aggregate;
 mod entity;
 mod label;
 mod field;
+mod command;
+mod event;
+mod data_type;
 use aggregate::Aggregate;
 use label::LabelMap;
 

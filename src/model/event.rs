@@ -3,12 +3,12 @@ use serde::Deserialize;
 use super::field::DataType;
 
 #[derive(Clone, Debug, Deserialize)]
-pub struct Command {
+pub struct Event {
   parameters: HashMap<String, DataType>
 }
 
-impl Command {
-  pub fn load_from_str(yaml: &str) -> serde_yaml::Result<Command> {
+impl Event {
+  pub fn load_from_str(yaml: &str) -> serde_yaml::Result<Event> {
     serde_yaml::from_str(yaml)
   }
 }
@@ -17,16 +17,16 @@ impl Command {
 mod tests {
   use super::*;
 
-  fn valid_command() -> String {
+  fn valid_event() -> String {
     String::from(
 r#"
-[{cost: Number}]
+[{cost: Number, country: String, vat: Number}]
 "#)
   }
 
   #[test]
-  fn loads_command() {
-    let c = Command::load_from_str(&valid_command()).unwrap();
+  fn loads_event() {
+    let c = Event::load_from_str(&valid_event()).unwrap();
     assert!(c.parameters.get("cost").is_some());
   }
 }
