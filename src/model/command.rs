@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use serde::Deserialize;
-use super::field::DataType;
+use super::data_type::DataType;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Command {

@@ -1,6 +1,8 @@
+use std::collections::HashMap;
+
 use serde::Deserialize;
-use rust_decimal::Decimal;
-//use rust_decimal_macros::dec;
+
+
 
 #[derive(Debug, Clone, Deserialize)]
 pub enum DataType {
@@ -8,9 +10,9 @@ pub enum DataType {
   Number,
   Decimal,
   Bool,
-  Money(MoneyMeta),
+  Money,
   Quantity,
-  Amount(AmountMeta)
+  Amount
 }
 
 impl DataType {
@@ -20,11 +22,26 @@ impl DataType {
 }
 
 #[derive(Debug, Clone, Deserialize)]
+pub enum DataTypeData {
+  Decimal(String, String, String),
+  CompoundString(HashMap<String, String>)
+}
+
+impl DataTypeData {
+  pub fn load_from_str(yaml: &str) -> serde_yaml::Result<DataTypeData> {
+    serde_yaml::from_str(yaml)
+  }
+}
+
+/*
+Probably delete all this
+#[derive(Debug, Clone, Deserialize)]
 pub struct MoneyMeta {
   name: String,
   symbol: String,
   cent_symbol: String
 }
+
 
 impl MoneyMeta {
   pub fn load_from_str(yaml: &str) -> serde_yaml::Result<MoneyMeta> {
@@ -32,12 +49,14 @@ impl MoneyMeta {
   }
 }
 
+
 #[derive(Debug, Clone, Deserialize)]
 pub struct AmountMeta {
   name: String,
   symbol: String,
   cent_symbol: String 
 }
+*/
 
 #[cfg(test)]
 mod tests {
@@ -47,24 +66,15 @@ mod tests {
     String::from("Number")
   }
 
-  fn valid_money_meta() -> String {
+  fn valid_data_type_data() -> String {
     String::from(
-r#"
-name: USD
-symbol: $
-cent_symbol: c
-"#
+  "
+  Decimal:
+    - GBP
+    - £
+    - p
+  "
     )
-  }
-
-  fn valid_money() -> String {
-    String::from(
-r#"
-Money:
-  name: USD
-  symbol: $
-  cent_symbol: c
-"#)
   }
 
   #[test]
@@ -74,20 +84,14 @@ Money:
   }
 
   #[test]
-  fn loads_money_meta() {
-    let mm = MoneyMeta::load_from_str(&valid_money_meta());
-    assert_eq!(mm.unwrap().name, String::from("USD"));
+  fn loads_decimal_data_type_data() {
+    let d = DataTypeData::load_from_str(&valid_data_type_data()).unwrap();
+    if let DataTypeData::Decimal(name, _, _) = d {
+      assert_eq!(name, format!("GBP"));
+    }
+    
   }
 
-  #[test]
-  fn loads_money() {
-    let m = DataType::load_from_str(&valid_money()).unwrap();
-    if let DataType::Money(meta) = m {
-      assert_eq!(meta.name, String::from("USD"));
-    } else {
-      assert!(false);
-    }
-  }
 }
 
 

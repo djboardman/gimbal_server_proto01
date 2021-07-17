@@ -8,15 +8,20 @@ mod field;
 mod command;
 mod event;
 mod data_type;
+mod value;
+
+
 use aggregate::Aggregate;
 use label::LabelMap;
+use data_type::DataType;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Model {
   name: String,
   default_lang: String,
   aggregates: HashMap<String, Aggregate>,
-  labels: LabelMap
+  labels: LabelMap,
+  data_types: Option<HashMap<String, DataType>>
 }
 
 impl Model {
@@ -24,6 +29,8 @@ impl Model {
     serde_yaml::from_str(&str)
   }
 }
+
+
 
 #[cfg(test)]
 mod tests {
