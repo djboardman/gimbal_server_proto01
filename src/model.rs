@@ -8,8 +8,7 @@ mod field;
 mod command;
 mod event;
 mod data_type;
-mod value;
-
+mod data;
 
 use aggregate::Aggregate;
 use label::LabelMap;
@@ -30,7 +29,7 @@ impl Model {
   }
 }
 
-
+/*
 
 #[cfg(test)]
 mod tests {
@@ -103,6 +102,23 @@ model:
 ")
   }
 
+  fn valid_command() -> String {
+    String::from(
+r#"
+data_object: {cost: Number}
+event_name: expense_report_created
+"#)
+  }
+
+  fn valid_event() -> String {
+    String::from(
+r#"
+[{cost: Number}]
+"#)
+  }
+
+
+
   #[test]
   fn load_expenses() {
     let en = String::from("en");
@@ -138,3 +154,4 @@ model:
   }
 */
 }
+*/

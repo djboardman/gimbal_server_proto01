@@ -4,7 +4,7 @@ use super::field::DataType;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Event {
-  parameters: HashMap<String, DataType>
+  pub data_object: HashMap<String, DataType>
 }
 
 impl Event {
@@ -27,6 +27,6 @@ r#"
   #[test]
   fn loads_event() {
     let c = Event::load_from_str(&valid_event()).unwrap();
-    assert!(c.parameters.get("cost").is_some());
+    assert!(c.data_object.get("cost").is_some());
   }
 }
