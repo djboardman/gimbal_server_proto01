@@ -6,7 +6,6 @@ use super::label::LabelMap;
 use super::entity::Entity;
 use super::command::Command;
 use super::event::Event;
-use super::data::Data;
 
 #[derive(Debug, Deserialize, Clone)]
 pub struct Aggregate {
@@ -26,6 +25,8 @@ impl Aggregate {
 #[cfg(test)]
 mod tests {
   use super::*;
+  use super::super::super::data::data_instance::DataInstance;
+  use super::super::super::data::data_object_instance::DataObjectInstance;
 
   fn valid_aggregate() -> String {
     String::from(
@@ -61,8 +62,8 @@ events:
   #[test]
   fn simple_command_to_event() {
     let a = Aggregate::load_from_str(&valid_aggregate()).unwrap();
-    let d = Data::Number(23.0);
-    let mut command_object = super::super::data::DataObject::new();
+    let d = DataInstance::Number(23.0);
+    let mut command_object = DataObjectInstance::new();
     command_object.insert(format!("cost"), d);
     let c = a.commands.get(&format!("create_expense_report")).unwrap();
     let e = a.events.get(&c.event_name).unwrap();

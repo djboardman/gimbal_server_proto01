@@ -1,5 +1,6 @@
 
 mod model;
+mod data;
 mod script;
 
 fn main() {

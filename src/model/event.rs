@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use serde::Deserialize;
 use super::field::DataType;
+use super::super::data::data_object_instance::DataObjectInstance;
 
 #[derive(Clone, Debug, Deserialize)]
 pub struct Event {
@@ -12,6 +13,13 @@ impl Event {
     serde_yaml::from_str(yaml)
   }
 }
+
+#[derive(Clone, Debug)]
+pub struct EventInstance {
+  pub event_name: String,
+  pub data_object: DataObjectInstance
+}
+
 
 #[cfg(test)]
 mod tests {
