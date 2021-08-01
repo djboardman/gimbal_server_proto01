@@ -8,6 +8,7 @@ mod field;
 mod command;
 mod event;
 pub mod data_type;
+mod parser;
 
 use aggregate::Aggregate;
 use label::LabelMap;
