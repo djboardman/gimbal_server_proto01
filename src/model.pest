@@ -5,13 +5,13 @@ file = _{ SOI ~ (import)* ~ (definitions)+ ~ EOI }
 import = { "import" ~ filename  }
 filename = @{ ( ASCII_ALPHANUMERIC | "_" | "/" | "." )+ }
 
-definitions = _{ (agg | ent)+ }
+definitions = _{ (model | aggregate | entity)+ }
 
-agg = { "def agg " ~ name ~ label ~ "{" ~ "}" } 
-ent = { "def ent " ~ name ~ label ~ parent ~ "{" ~ "}" } 
+model = { "def model " ~ name ~ label ~ "{" ~ "}"}
+aggregate = { "def agg " ~ name ~ label ~ parent ~ "{" ~ "}" } 
+entity = { "def ent " ~ name ~ label ~ parent ~ "{" ~ "}" } 
 
 name = @{ (ASCII_ALPHA_LOWER | "_" )+ }
-agg_name = { name }
 
 label = @{ "\"" ~ (LETTER | SPACING_MARK)+ ~ "\"" }
 
