@@ -89,6 +89,10 @@ impl ModelItem {
         .find(|p| p.rule == Rule::name)?
         .value)
   }
+
+  fn property(&self, rule: Rule) -> Option<&ModelItem> {
+    self.properties.iter().find(|i| i.rule == rule)
+  }
 }
 
 #[derive(Debug)]
@@ -131,7 +135,7 @@ mod tests {
 
   fn agg_with_ent() -> String {
     format!(r#"def agg person "Person" for expenses {{ }}
-def model expenses "Expenses" {{ }}
+def model expenses "Expenses" {{ default_lang = en }}
 def ent person "Person" for person {{ }}"#)
   }
 
@@ -144,8 +148,17 @@ def agg claim "Claim" for expenses {{ }}"#)
   #[test]
   fn successful_parse() {
     let s = &agg_with_ent();
-    let result = parse_model(s);
-    println!("++++++ {:?}", result);
+    let result = parse_model(s).unwrap();
+    assert_eq!(result[0].item.rule, Rule::model);
+    assert_eq!(result[0].item.name, "expenses");
+    assert_eq!(result[0].item.properties.iter().find(|n| n.rule == Rule::label).unwrap().value, "\"Expenses\"");
+    assert_eq!(result[0].children[0].item.rule, Rule::aggregate);
+    assert_eq!(result[0].children[0].item.name, "person");
+    assert_eq!(result[0].children[0].children[0].item.rule, Rule::entity);
+    assert_eq!(result[0].children[0].children[0].item.name, "person");
+
+    assert_eq!("en", result[0].item.property(Rule::default_lang).unwrap().property(Rule::lang_tag).unwrap().value);
+    println!("++++++ {:?}", result[0].item.property(Rule::default_lang).unwrap().property(Rule::lang_tag).unwrap().value);
   }
 /*
   #[test]
