@@ -93,6 +93,10 @@ impl ModelItem {
   fn property(&self, rule: Rule) -> Option<&ModelItem> {
     self.properties.iter().find(|i| i.rule == rule)
   }
+
+  fn multi_property(self, rule: Rule) -> Vec<ModelItem> {
+    self.properties.clone().into_iter().filter(|i| i.rule == rule).collect()
+  }
 }
 
 #[derive(Debug)]
@@ -135,7 +139,13 @@ mod tests {
 
   fn agg_with_ent() -> String {
     format!(r#"def agg person "Person" for expenses {{ }}
-def model expenses "Expenses" {{ default_lang = en }}
+def model expenses "Expenses" {{ 
+  default_lang = en 
+  labels {{
+    de = "DE Label"
+    es = "es-ES Label"
+  }}
+}}
 def ent person "Person" for person {{ }}"#)
   }
 
@@ -158,7 +168,7 @@ def agg claim "Claim" for expenses {{ }}"#)
     assert_eq!(result[0].children[0].children[0].item.name, "person");
 
     assert_eq!("en", result[0].item.property(Rule::default_lang).unwrap().property(Rule::lang_tag).unwrap().value);
-    println!("++++++ {:?}", result[0].item.property(Rule::default_lang).unwrap().property(Rule::lang_tag).unwrap().value);
+    println!("++++++ {:?}", result[0].item.clone().multi_property(Rule::lang_label));
   }
 /*
   #[test]
