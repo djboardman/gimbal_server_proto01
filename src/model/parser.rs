@@ -94,7 +94,7 @@ impl ModelItem {
     self.properties.iter().find(|i| i.rule == rule)
   }
 
-  fn multi_property(self, rule: Rule) -> Vec<ModelItem> {
+  fn multi_property(&self, rule: Rule) -> Vec<ModelItem> {
     self.properties.clone().into_iter().filter(|i| i.rule == rule).collect()
   }
 }
@@ -168,7 +168,8 @@ def agg claim "Claim" for expenses {{ }}"#)
     assert_eq!(result[0].children[0].children[0].item.name, "person");
 
     assert_eq!("en", result[0].item.property(Rule::default_lang).unwrap().property(Rule::lang_tag).unwrap().value);
-    println!("++++++ {:?}", result[0].item.clone().multi_property(Rule::lang_label));
+    assert_eq!("\"DE Label\"", result[0].item.multi_property(Rule::lang_label)[0].property(Rule::label).unwrap().value);
+    //println!("++++++ {:?}", result[0].item.clone().multi_property(Rule::lang_label));
   }
 /*
   #[test]
