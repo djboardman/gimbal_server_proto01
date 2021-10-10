@@ -24,7 +24,6 @@ impl Field {
   pub fn field_for_country(&self, country: &str) -> bool {
     self.countries.is_none() || self.countries.as_ref().unwrap().iter().any(|c| c == country)
   }
-
  
 }
 

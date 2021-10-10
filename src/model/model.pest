@@ -1,0 +1,43 @@
+
+file = _{ SOI ~ (import)* ~ (definitions)+ ~ EOI }
+WHITESPACE = _{ " " | "\t" | "\r" | "\n" }
+
+import = { "import" ~ filename  }
+filename = @{ ( ASCII_ALPHANUMERIC | "_" | "/" | "." )+ }
+
+definitions = _{ (model | aggregate | entity | command)+ }
+
+model = { "def model " ~ name ~ label ~ "{" ~ (model_property)* ~ "}"}
+aggregate = { "def agg " ~ name ~ label ~ parent ~ "{" ~ (aggregate_property)* ~ "}" } 
+entity = { "def ent " ~ name ~ label ~ parent ~ "{" ~ (entity_property)* ~ "}" } 
+command = { "def command " ~ name ~ parent ~ "{"  ~ "}" }
+
+name = @{ (ASCII_ALPHA_LOWER | "_" )+ }
+parent = { "for "  ~ name }
+
+model_property = _{ (default_lang | labels) }
+default_lang = { "default_lang = " ~ lang_tag}
+
+aggregate_property = _{ labels }
+
+entity_property = _{ labels | cr_fields }
+
+command_property = _{ cr_fields }
+
+labels = _{ "labels" ~ "{" ~ (lang_label)* ~ "}" }
+lang_label = { (lang_tag ~ "=" ~ label) }
+label = { "\"" ~ (LETTER | DASH_PUNCTUATION | CONNECTOR_PUNCTUATION | " ")+ ~ "\"" }
+lang_tag = @{ ASCII_ALPHA_LOWER ~ ASCII_ALPHA_LOWER ~ ("-" ~ ASCII_ALPHA_UPPER ~ ASCII_ALPHA_UPPER)? }
+
+cr_fields = { "create fields " ~ "{" ~ (cr_field)* ~ "}" }
+
+cr_field = { name ~ label ~ data_type }
+
+data_type = {
+  "String" |
+  "Number" |
+  "Decimal" |
+  "Bool" |
+  "Money" |
+  "Quantity" |
+  "Amount"}

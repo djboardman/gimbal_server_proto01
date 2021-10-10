@@ -6,7 +6,7 @@ use pest::iterators::{Pair, Pairs};
 
 
 #[derive(Parser)]
-#[grammar = "model.pest"]
+#[grammar = "model/model.pest"]
 pub struct ModelParser;
 
 
@@ -21,6 +21,7 @@ fn new_model(pairs: Pairs<Rule>) -> Result<Vec<ModelTree>, pest::error::Error<Ru
 
 
   let model_items = pairs.map(|p| ModelItem::new(p));
+  println!("{:?}", model_items);
   let grouped_items = item_rules.into_iter()
                                 .map(|r| (r, model_items.clone().filter(|i| i.rule == r)
                                .collect::<Vec<ModelItem>>())).collect::<GroupedItems>();
@@ -39,7 +40,8 @@ impl RuleTree {
   fn new() -> RuleTree {
     RuleTree{ rule: Rule::model, children: vec![
       RuleTree{ rule: Rule::aggregate, children: vec![
-        RuleTree{ rule: Rule::entity, children: vec![]}
+        RuleTree{ rule: Rule::entity, children: vec![]},
+        //RuleTree{ rule: Rule::command, children: vec![]}
       ]}
     ]}
   }
@@ -138,7 +140,13 @@ mod tests {
   use super::*;
 
   fn agg_with_ent() -> String {
-    format!(r#"def agg person "Person" for expenses {{ }}
+    format!(r#"
+def agg person "Person" for expenses {{
+  labels {{
+    de = "DE aggregate"
+    es = "ES aggregate"
+  }}
+ }}
 def model expenses "Expenses" {{ 
   default_lang = en 
   labels {{
@@ -146,7 +154,17 @@ def model expenses "Expenses" {{
     es = "es-ES Label"
   }}
 }}
-def ent person "Person" for person {{ }}"#)
+def command create_person for person {{ }}
+def ent person "Person" for person {{
+  labels {{
+    de = "DE Entity"
+    es = "ES Entity"
+  }}
+  create fields {{
+    first_name "First Name" String
+    last_name "Last Name" String
+  }}
+}}"#)
   }
 
   fn two_aggs() -> String {
@@ -156,7 +174,7 @@ def agg claim "Claim" for expenses {{ }}"#)
   }
 
   #[test]
-  fn successful_parse() {
+  fn model_parse() {
     let s = &agg_with_ent();
     let result = parse_model(s).unwrap();
     assert_eq!(result[0].item.rule, Rule::model);
@@ -171,12 +189,6 @@ def agg claim "Claim" for expenses {{ }}"#)
     assert_eq!("\"DE Label\"", result[0].item.multi_property(Rule::lang_label)[0].property(Rule::label).unwrap().value);
     //println!("++++++ {:?}", result[0].item.clone().multi_property(Rule::lang_label));
   }
-/*
-  #[test]
-  fn parse_two_aggs() {
-    let s = &two_aggs();
-    let result = parse_model(s);
-    println!("****** {:?}", result);
-  }
-*/
+
+  
 }
